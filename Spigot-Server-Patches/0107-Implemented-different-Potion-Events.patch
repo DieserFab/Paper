@@ -1,0 +1,126 @@
+From aa2436a0fbf457bbff2b80ed019e7faa6ccafbfa Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Tue, 28 Jul 2020 01:16:43 +0200
+Subject: [PATCH] Implemented different Potion Events
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index 7f130444..04e6f90f 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -17,6 +17,10 @@ import java.util.ArrayList;
+ import com.google.common.base.Function;
+ import com.google.common.collect.Lists;
+ import de.dieserfab.fabspigot.enums.SlotType;
++import de.dieserfab.fabspigot.event.entity.PotionEffectAddEvent;
++import de.dieserfab.fabspigot.event.entity.PotionEffectExpireEvent;
++import de.dieserfab.fabspigot.event.entity.PotionEffectExtendEvent;
++import de.dieserfab.fabspigot.event.entity.PotionEffectRemoveEvent;
+ import de.dieserfab.fabspigot.event.player.PlayerArmorChangeEvent;
+ import org.bukkit.craftbukkit.entity.CraftItem;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+@@ -34,6 +38,8 @@ import co.aikar.timings.SpigotTimings; // Spigot
+ 
+ // PaperSpigot start
+ import org.bukkit.Bukkit;
++import org.bukkit.potion.PotionEffect;
++import org.bukkit.potion.PotionEffectType;
+ import org.spigotmc.event.entity.EntityDismountEvent;
+ // PaperSpigot end
+ 
+@@ -486,6 +492,21 @@ public abstract class EntityLiving extends Entity {
+ 
+             if (!mobeffect.tick(this)) {
+                 if (!this.world.isClientSide) {
++                    PotionEffectExpireEvent event = new PotionEffectExpireEvent((LivingEntity) this.getBukkitEntity(),
++                            new PotionEffect(PotionEffectType.getById(mobeffect.getEffectId()),
++                                    mobeffect.getDuration(),
++                                    mobeffect.getAmplifier(),
++                                    mobeffect.isAmbient(),
++                                    mobeffect.isShowParticles()));
++                    this.world.getServer().getPluginManager().callEvent(event);
++                    if (event.isCancelled()) {
++                        mobeffect.a(new MobEffect(mobeffect.getEffectId(),
++                                event.getDuration(),
++                                mobeffect.getAmplifier(),
++                                mobeffect.isAmbient(),
++                                mobeffect.isShowParticles()));
++                        continue;
++                    }
+                     iterator.remove();
+                     this.b(mobeffect);
+                 }
+@@ -590,7 +611,11 @@ public abstract class EntityLiving extends Entity {
+         return (MobEffect) this.effects.get(Integer.valueOf(mobeffectlist.id));
+     }
+ 
+-    public void addEffect(MobEffect mobeffect) {
++    public void addEffect(MobEffect mobEffect) {
++        this.addEffect(mobEffect, PotionEffectAddEvent.EffectCause.UNKNOWN);
++    }
++
++    public void addEffect(MobEffect mobeffect, PotionEffectAddEvent.EffectCause effectCause) {
+         org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
+         // CraftBukkit start
+         if (isTickingEffects) {
+@@ -600,9 +625,36 @@ public abstract class EntityLiving extends Entity {
+         // CraftBukkit end
+         if (this.d(mobeffect)) {
+             if (this.effects.containsKey(Integer.valueOf(mobeffect.getEffectId()))) {
+-                ((MobEffect) this.effects.get(Integer.valueOf(mobeffect.getEffectId()))).a(mobeffect);
+-                this.a((MobEffect) this.effects.get(Integer.valueOf(mobeffect.getEffectId())), true);
++                MobEffect current = this.effects.get(Integer.valueOf(mobeffect.getEffectId()));
++                PotionEffectExtendEvent event = new PotionEffectExtendEvent((LivingEntity) this.getBukkitEntity(),
++                        new PotionEffect(PotionEffectType.getById(mobeffect.getEffectId()),
++                                mobeffect.getDuration(),
++                                mobeffect.getAmplifier(),
++                                mobeffect.isAmbient(),
++                                mobeffect.isShowParticles()),
++                        new PotionEffect(PotionEffectType.getById(current.getEffectId()),
++                                current.getDuration(),
++                                current.getAmplifier(),
++                                current.isAmbient(),
++                                current.isShowParticles()),
++                        effectCause);
++                Bukkit.getPluginManager().callEvent(event);
++                if (event.isCancelled()) {
++                    return;
++                }
++                current.a(mobeffect);
++                this.a(current, true);
+             } else {
++                PotionEffectAddEvent event = new PotionEffectAddEvent((LivingEntity) this.getBukkitEntity(),
++                        new PotionEffect(PotionEffectType.getById(mobeffect.getEffectId()),
++                                mobeffect.getDuration(),
++                                mobeffect.getAmplifier(),
++                                mobeffect.isAmbient(),
++                                mobeffect.isShowParticles()), effectCause);
++                this.world.getServer().getPluginManager().callEvent(event);
++                if (event.isCancelled()) {
++                    return;
++                }
+                 this.effects.put(Integer.valueOf(mobeffect.getEffectId()), mobeffect);
+                 this.a(mobeffect);
+             }
+@@ -636,6 +688,18 @@ public abstract class EntityLiving extends Entity {
+         MobEffect mobeffect = (MobEffect) this.effects.remove(Integer.valueOf(i));
+ 
+         if (mobeffect != null) {
++            PotionEffectRemoveEvent event = new PotionEffectRemoveEvent((LivingEntity) this.getBukkitEntity(),
++                    new PotionEffect(PotionEffectType.getById(mobeffect.getEffectId()),
++                            mobeffect.getDuration(),
++                            mobeffect.getAmplifier(),
++                            mobeffect.isAmbient(),
++                            mobeffect.isShowParticles()));
++            Bukkit.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++                this.effects.put(i, mobeffect);
++                return;
++            }
++
+             this.b(mobeffect);
+         }
+ 
+-- 
+2.26.2.windows.1
+

@@ -1,0 +1,47 @@
+From 2f4832970cc5e131dbcc242b22c584cc912dab82 Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Tue, 28 Jul 2020 01:16:03 +0200
+Subject: [PATCH] Changed Cause Enum
+
+
+diff --git a/src/main/java/de/dieserfab/fabspigot/event/entity/PotionEffectAddEvent.java b/src/main/java/de/dieserfab/fabspigot/event/entity/PotionEffectAddEvent.java
+index 01882bb2..bc7e8bb5 100644
+--- a/src/main/java/de/dieserfab/fabspigot/event/entity/PotionEffectAddEvent.java
++++ b/src/main/java/de/dieserfab/fabspigot/event/entity/PotionEffectAddEvent.java
+@@ -48,30 +48,7 @@ public class PotionEffectAddEvent extends PotionEffectEvent implements Cancellab
+      */
+     public enum EffectCause {
+ 
+-        /**
+-         * Indicates the effect was caused by the proximity of a potion effect splash
+-         */
+-        POTION_SPLASH,
+-        /**
+-         * Indicates the effect was caused by the proximity of a beacon
+-         */
+-        BEACON,
+-        /**
+-         * Indicates the effect was caused by damage from a wither skeleton
+-         */
+-        WITHER_SKELETON,
+-        /**
+-         * Indicates the effect was caused by damage from a wither skull
+-         */
+-        WITHER_SKULL,
+-        /**
+-         * Indicates the effect was caused by a plugin
+-         */
+-        PLUGIN,
+-        /**
+-         * Indicates the effect was caused by an event not covered by
+-         * this enum
+-         */
+-        UNKNOWN
++        UNKNOWN;
++
+     }
+ }
+\ No newline at end of file
+-- 
+2.26.2.windows.1
+

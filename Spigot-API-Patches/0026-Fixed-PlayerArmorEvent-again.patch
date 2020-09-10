@@ -1,0 +1,86 @@
+From ba578461dd6d8b23247304056eb2764b09eb8cd6 Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Mon, 27 Jul 2020 21:49:41 +0200
+Subject: [PATCH] Fixed PlayerArmorEvent again
+
+
+diff --git a/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java b/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java
+index 4fb3d9de..a0d79ba2 100644
+--- a/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java
++++ b/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java
+@@ -1,16 +1,11 @@
+ package de.dieserfab.fabspigot.event.player;
+ 
+-import org.bukkit.Material;
++import de.dieserfab.fabspigot.enums.SlotType;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.event.player.PlayerEvent;
+ import org.bukkit.inventory.ItemStack;
+ 
+-import java.util.Arrays;
+-import java.util.Collections;
+-import java.util.HashSet;
+-import java.util.Set;
+-
+ public class PlayerArmorChangeEvent extends PlayerEvent {
+     private static final HandlerList HANDLERS = new HandlerList();
+ 
+@@ -50,54 +45,4 @@ public class PlayerArmorChangeEvent extends PlayerEvent {
+     public static HandlerList getHandlerList() {
+         return HANDLERS;
+     }
+-
+-    public enum SlotType {
+-        HAND(null),
+-        HEAD(Material.DIAMOND_HELMET, Material.GOLD_HELMET, Material.IRON_HELMET, Material.CHAINMAIL_HELMET, Material.LEATHER_HELMET, Material.PUMPKIN, Material.JACK_O_LANTERN),
+-        CHEST(Material.DIAMOND_CHESTPLATE, Material.GOLD_CHESTPLATE, Material.IRON_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.LEATHER_CHESTPLATE),
+-        LEGS(Material.DIAMOND_LEGGINGS, Material.GOLD_LEGGINGS, Material.IRON_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.LEATHER_LEGGINGS),
+-        FEET(Material.DIAMOND_BOOTS, Material.GOLD_BOOTS, Material.IRON_BOOTS, Material.CHAINMAIL_BOOTS, Material.LEATHER_BOOTS);
+-
+-        private final Set<Material> mutableTypes = new HashSet<>();
+-
+-        private Set<Material> immutableTypes;
+-
+-        SlotType(Material... types) {
+-            this.mutableTypes.addAll(Arrays.asList(types));
+-        }
+-
+-        public static SlotType getById(int id) {
+-            switch (id) {
+-                case 0:
+-                    return HAND;
+-                case 1:
+-                    return FEET;
+-                case 2:
+-                    return LEGS;
+-                case 3:
+-                    return CHEST;
+-                case 4:
+-                    return HEAD;
+-            }
+-            return null;
+-        }
+-
+-        public Set<Material> getTypes() {
+-            if (this.immutableTypes == null)
+-                this.immutableTypes = Collections.unmodifiableSet(this.mutableTypes);
+-            return this.immutableTypes;
+-        }
+-
+-        public static SlotType getByMaterial(Material material) {
+-            for (SlotType slotType : values()) {
+-                if (slotType.getTypes().contains(material))
+-                    return slotType;
+-            }
+-            return null;
+-        }
+-
+-        public static boolean isEquipable(Material material) {
+-            return (getByMaterial(material) != null);
+-        }
+-    }
+ }
+-- 
+2.26.2.windows.1
+

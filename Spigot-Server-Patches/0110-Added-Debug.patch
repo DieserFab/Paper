@@ -1,0 +1,25 @@
+From b6160a161067388af845e73b7f959baefbce5aef Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Mon, 3 Aug 2020 20:36:34 +0200
+Subject: [PATCH] Added Debug
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 1c99ab0b..1dac56c6 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -1051,6 +1051,11 @@ public abstract class PlayerList {
+     public EntityPlayer getPlayer(String s) {
+         if (this.playersByName.get(s) == null) {
+             for (EntityPlayer entityPlayer : this.playersByName.values()) {
++                Bukkit.getOnlinePlayers().forEach(player -> {
++                    Bukkit.broadcastMessage(player.getName()+" "+player.isNicked()+" "+player.getNickName());
++                    Bukkit.broadcastMessage(entityPlayer.getBukkitEntity().getName()+" "+entityPlayer.getBukkitEntity().isNicked()+" "+entityPlayer.getBukkitEntity().getNickName());
++                    Bukkit.broadcastMessage(s);
++                });
+                 if (entityPlayer.getBukkitEntity().isNicked()) {
+                     if (entityPlayer.getBukkitEntity().getDisplayName().equalsIgnoreCase(s)) {
+                         return entityPlayer;
+-- 
+2.26.2.windows.1
+

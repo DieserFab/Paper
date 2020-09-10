@@ -1,0 +1,33 @@
+From f72048723b5465b6b49dca8a16a9767f73ae00e5 Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Tue, 4 Aug 2020 21:38:17 +0200
+Subject: [PATCH] Added Extradata to ItemStack
+
+
+diff --git a/src/main/java/org/bukkit/inventory/ItemStack.java b/src/main/java/org/bukkit/inventory/ItemStack.java
+index d9cff5b0..d02b2656 100644
+--- a/src/main/java/org/bukkit/inventory/ItemStack.java
++++ b/src/main/java/org/bukkit/inventory/ItemStack.java
+@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
+ import java.util.LinkedHashMap;
+ import java.util.Map;
+ 
++import com.google.common.collect.Maps;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Material;
+@@ -22,6 +23,11 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+     private MaterialData data = null;
+     private short durability = 0;
+     private ItemMeta meta;
++    private Map<String, Object> extraData = Maps.newConcurrentMap();
++
++    public Map<String, Object> getExtraData() {
++        return extraData;
++    }
+ 
+     @Utility
+     protected ItemStack() {}
+-- 
+2.26.2.windows.1
+

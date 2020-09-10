@@ -1,0 +1,30 @@
+From 553b116ea63d5f675200b1c906da322484cb91c5 Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Mon, 3 Aug 2020 20:09:39 +0200
+Subject: [PATCH] Nickname Compatabillity
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 69485fa6..3e1786ec 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -421,6 +421,16 @@ public final class CraftServer implements Server {
+                 }
+                 if (curDelta == 0) break;
+             }
++            if(player.isNicked()){
++                if (player.getNickName().toLowerCase().startsWith(lowerName)) {
++                    int curDelta = Math.abs(player.getName().length() - lowerName.length());
++                    if (curDelta < delta) {
++                        found = player;
++                        delta = curDelta;
++                    }
++                    if (curDelta == 0) break;
++                }
++            }
+         }
+         return found;
+     }
+-- 
+2.26.2.windows.1
+

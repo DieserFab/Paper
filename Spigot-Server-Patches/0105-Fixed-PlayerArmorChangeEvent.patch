@@ -1,0 +1,23 @@
+From b4f356d99d9deab01d1f0bf8818f3938e7f7698d Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Mon, 27 Jul 2020 20:41:10 +0200
+Subject: [PATCH] Fixed PlayerArmorChangeEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index fa4bd21a..60c9e335 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -1488,8 +1488,7 @@ public abstract class EntityLiving extends Entity {
+                         org.bukkit.inventory.ItemStack oldItem = CraftItemStack.asBukkitCopy(itemstack);
+                         org.bukkit.inventory.ItemStack newItem = CraftItemStack.asBukkitCopy(itemstack1);
+                         Bukkit.getPluginManager().callEvent(new PlayerArmorChangeEvent((Player) getBukkitEntity(), PlayerArmorChangeEvent.SlotType.getById(j), oldItem, newItem));
+-                    }
+-                    System.out.println(j+" ");
++                    } 
+                     ((WorldServer) this.world).getTracker().a((Entity) this, (Packet) (new PacketPlayOutEntityEquipment(this.getId(), j, itemstack1)));
+                     if (itemstack != null) {
+                         this.c.a(itemstack.B());
+-- 
+2.26.2.windows.1
+

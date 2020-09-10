@@ -1,11 +1,19 @@
+<<<<<<< Updated upstream
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+=======
+From b592dc4a98fcb4de82d20cf299528f9a085fe74e Mon Sep 17 00:00:00 2001
+>>>>>>> Stashed changes
 From: Zach Brown <zach.brown@destroystokyo.com>
 Date: Mon, 29 Feb 2016 20:40:33 -0600
 Subject: [PATCH] POM Changes
 
 
 diff --git a/pom.xml b/pom.xml
+<<<<<<< Updated upstream
 index db08e98c60084b16ee18455ce014a6ea305f89c5..52834690de9f07c9c4838dbef50031567c1a72dc 100644
+=======
+index 91627ff0..fd051da0 100644
+>>>>>>> Stashed changes
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,15 +1,14 @@
@@ -138,6 +146,7 @@ index db08e98c60084b16ee18455ce014a6ea305f89c5..52834690de9f07c9c4838dbef5003156
 +                            <Implementation-Vendor>${maven.build.timestamp}</Implementation-Vendor>
                              <Specification-Title>Bukkit</Specification-Title>
                              <Specification-Version>${api.version}</Specification-Version>
+<<<<<<< Updated upstream
                              <Specification-Vendor>Bukkit Team</Specification-Vendor>
 @@ -190,6 +196,7 @@
                              <goal>shade</goal>
@@ -182,10 +191,29 @@ index db08e98c60084b16ee18455ce014a6ea305f89c5..52834690de9f07c9c4838dbef5003156
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-compiler-plugin</artifactId>
                  <version>3.8.1</version>
+=======
+@@ -171,26 +163,6 @@
+                     </archive>
+                 </configuration>
+             </plugin>
+-            <plugin>
+-                <groupId>org.codehaus.mojo</groupId>
+-                <artifactId>animal-sniffer-maven-plugin</artifactId>
+-                <version>1.13</version>
+-                <executions>
+-                    <execution>
+-                        <phase>process-classes</phase>
+-                        <goals>
+-                            <goal>check</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+>>>>>>> Stashed changes
 -                <configuration>
 -                    <!-- we use the Eclipse compiler as it doesn't need a JDK -->
 -                    <compilerId>eclipse</compilerId>
 -                </configuration>
+<<<<<<< Updated upstream
                  <dependencies>
                      <!-- we need our custom version as it fixes some bugs on case sensitive file systems -->
                      <dependency>
@@ -195,6 +223,23 @@ index eaec0c30f15e4ee4611ae7c9b2c146d75a1e0d51..5014cbbeef9a9980cca43680c3378b9d
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -186,7 +186,7 @@ public class Main {
                  }
+=======
+-            </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+diff --git a/src/main/java/net/minecraft/server/PathfinderGoalNearestAttackableTarget.java b/src/main/java/net/minecraft/server/PathfinderGoalNearestAttackableTarget.java
+index c110e0c2..5540dde5 100644
+--- a/src/main/java/net/minecraft/server/PathfinderGoalNearestAttackableTarget.java
++++ b/src/main/java/net/minecraft/server/PathfinderGoalNearestAttackableTarget.java
+@@ -11,7 +11,7 @@ public class PathfinderGoalNearestAttackableTarget<T extends EntityLiving> exten
+     protected final Class<T> a;
+     private final int g;
+     protected final PathfinderGoalNearestAttackableTarget.DistanceComparator b;
+-    protected Predicate<? super T> c;
++    protected Predicate c;
+     protected EntityLiving d;
+>>>>>>> Stashed changes
  
                  if (Main.class.getPackage().getImplementationVendor() != null && System.getProperty("IReallyKnowWhatIAmDoingISwear") == null) {
 -                    Date buildDate = new Date(Integer.parseInt(Main.class.getPackage().getImplementationVendor()) * 1000L);
@@ -203,7 +248,11 @@ index eaec0c30f15e4ee4611ae7c9b2c146d75a1e0d51..5014cbbeef9a9980cca43680c3378b9d
                      Calendar deadline = Calendar.getInstance();
                      deadline.add(Calendar.DAY_OF_YEAR, -21);
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+<<<<<<< Updated upstream
 index 93046379d0cefd5d3236fc59e698809acdc18f80..674096cab190d62622f9947853b056f57d43a2a5 100644
+=======
+index 93046379..3a4b1424 100644
+>>>>>>> Stashed changes
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 @@ -11,7 +11,7 @@ public final class Versioning {
@@ -215,3 +264,9 @@ index 93046379d0cefd5d3236fc59e698809acdc18f80..674096cab190d62622f9947853b056f5
          Properties properties = new Properties();
  
          if (stream != null) {
+<<<<<<< Updated upstream
+=======
+-- 
+2.26.2.windows.1
+
+>>>>>>> Stashed changes

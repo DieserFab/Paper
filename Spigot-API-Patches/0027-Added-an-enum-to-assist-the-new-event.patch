@@ -1,0 +1,37 @@
+From 01e0fabede3f04b1ae31dc34a70007ef5f66fc48 Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Mon, 27 Jul 2020 21:50:24 +0200
+Subject: [PATCH] Added an enum to assist the new event
+
+
+diff --git a/src/main/java/de/dieserfab/fabspigot/enums/SlotType.java b/src/main/java/de/dieserfab/fabspigot/enums/SlotType.java
+new file mode 100644
+index 00000000..c08cef18
+--- /dev/null
++++ b/src/main/java/de/dieserfab/fabspigot/enums/SlotType.java
+@@ -0,0 +1,21 @@
++package de.dieserfab.fabspigot.enums;
++
++public enum SlotType {
++    HAND, HEAD, CHEST, LEGS, FEET;
++
++    public static SlotType getById(int id) {
++        switch (id) {
++            case 0:
++                return HAND;
++            case 1:
++                return FEET;
++            case 2:
++                return LEGS;
++            case 3:
++                return CHEST;
++            case 4:
++                return HEAD;
++        }
++        return null;
++    }
++}
+\ No newline at end of file
+-- 
+2.26.2.windows.1
+

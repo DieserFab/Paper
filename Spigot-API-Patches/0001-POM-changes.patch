@@ -1,11 +1,21 @@
+<<<<<<< Updated upstream
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Zach Brown <zach.brown@destroystokyo.com>
 Date: Tue, 1 Mar 2016 00:16:08 +0100
+=======
+From 81d1be3ed5dfb63cc9f610f985d416f843f1099b Mon Sep 17 00:00:00 2001
+From: Zach Brown <Zbob750@live.com>
+Date: Tue, 6 Jan 2015 22:12:31 -0600
+>>>>>>> Stashed changes
 Subject: [PATCH] POM changes
 
 
 diff --git a/pom.xml b/pom.xml
+<<<<<<< Updated upstream
 index 10d59b211587b22f73e911fb2872df3d181a0f8a..5adaed556ff075e11ad76e70b8d7e6244e2ff405 100644
+=======
+index cb142f21..d63151f1 100644
+>>>>>>> Stashed changes
 --- a/pom.xml
 +++ b/pom.xml
 @@ -2,34 +2,28 @@
@@ -88,6 +98,7 @@ index 10d59b211587b22f73e911fb2872df3d181a0f8a..5adaed556ff075e11ad76e70b8d7e624
 @@ -113,6 +125,7 @@
      </dependencies>
  
+<<<<<<< Updated upstream
      <build>
 +        <defaultGoal>clean install</defaultGoal>
          <plugins>
@@ -97,10 +108,29 @@ index 10d59b211587b22f73e911fb2872df3d181a0f8a..5adaed556ff075e11ad76e70b8d7e624
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-compiler-plugin</artifactId>
                  <version>3.8.1</version>
+=======
+@@ -128,26 +130,6 @@
+                     </dependency>
+                 </dependencies>
+             </plugin>
+-            <plugin>
+-                <groupId>org.codehaus.mojo</groupId>
+-                <artifactId>animal-sniffer-maven-plugin</artifactId>
+-                <version>1.13</version>
+-                <executions>
+-                    <execution>
+-                        <phase>process-classes</phase>
+-                        <goals>
+-                            <goal>check</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+>>>>>>> Stashed changes
 -                <configuration>
 -                    <!-- we use the Eclipse compiler as it doesn't need a JDK -->
 -                    <compilerId>eclipse</compilerId>
 -                </configuration>
+<<<<<<< Updated upstream
                  <dependencies>
                      <!-- we need our custom version as it fixes some bugs on case sensitive file systems -->
                      <dependency>
@@ -112,3 +142,12 @@ index 10d59b211587b22f73e911fb2872df3d181a0f8a..5adaed556ff075e11ad76e70b8d7e624
                      <!-- when downloading via Maven we can pull depends individually -->
                      <shadedArtifactAttached>true</shadedArtifactAttached>
                  </configuration>
+=======
+-            </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+-- 
+2.26.2.windows.1
+
+>>>>>>> Stashed changes

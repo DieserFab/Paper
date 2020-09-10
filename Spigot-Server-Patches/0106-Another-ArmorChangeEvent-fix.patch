@@ -1,0 +1,32 @@
+From 562198d6e209ec25fa5bfbf0e13ae5e46b5a3b4d Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Mon, 27 Jul 2020 21:49:09 +0200
+Subject: [PATCH] Another ArmorChangeEvent fix
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index 60c9e335..7f130444 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -16,6 +16,7 @@ import java.util.ArrayList;
+ 
+ import com.google.common.base.Function;
+ import com.google.common.collect.Lists;
++import de.dieserfab.fabspigot.enums.SlotType;
+ import de.dieserfab.fabspigot.event.player.PlayerArmorChangeEvent;
+ import org.bukkit.craftbukkit.entity.CraftItem;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+@@ -1487,8 +1488,8 @@ public abstract class EntityLiving extends Entity {
+                     if (this instanceof EntityPlayer) {
+                         org.bukkit.inventory.ItemStack oldItem = CraftItemStack.asBukkitCopy(itemstack);
+                         org.bukkit.inventory.ItemStack newItem = CraftItemStack.asBukkitCopy(itemstack1);
+-                        Bukkit.getPluginManager().callEvent(new PlayerArmorChangeEvent((Player) getBukkitEntity(), PlayerArmorChangeEvent.SlotType.getById(j), oldItem, newItem));
+-                    } 
++                        Bukkit.getPluginManager().callEvent(new PlayerArmorChangeEvent((Player) getBukkitEntity(), SlotType.getById(j), oldItem, newItem));
++                    }
+                     ((WorldServer) this.world).getTracker().a((Entity) this, (Packet) (new PacketPlayOutEntityEquipment(this.getId(), j, itemstack1)));
+                     if (itemstack != null) {
+                         this.c.a(itemstack.B());
+-- 
+2.26.2.windows.1
+

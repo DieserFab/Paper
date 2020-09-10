@@ -1,0 +1,814 @@
+From 415b818bb4eaa527ce22defa27ce4417fea30082 Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Sun, 26 Jul 2020 22:06:17 +0200
+Subject: [PATCH] Changed Version command added extra functionality to player
+ class
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/VersionCommand.java b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+index e91e1d8c..4b069bc8 100644
+--- a/src/main/java/org/bukkit/command/defaults/VersionCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+@@ -43,8 +43,8 @@ public class VersionCommand extends BukkitCommand {
+         if (!testPermission(sender)) return true;
+ 
+         if (args.length == 0) {
+-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
+-            sendVersion(sender);
++            sender.sendMessage("This Server is running git-FabSpigot (MC: 1.8.8)");
++            return true;
+         } else {
+             StringBuilder name = new StringBuilder();
+ 
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index d02fe560..27768be8 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1,6 +1,7 @@
+ package org.bukkit.entity;
+ 
+ import java.net.InetSocketAddress;
++import java.util.Map;
+ 
+ import org.bukkit.Achievement;
+ import org.bukkit.ChatColor;
+@@ -28,6 +29,50 @@ import org.github.paperspigot.Title;
+  */
+ public interface Player extends HumanEntity, Conversable, CommandSender, OfflinePlayer, PluginMessageRecipient {
+ 
++    /**
++     * An extra Map where you can store additional data to this player object
++     *
++     * @return the map
++     */
++    public Map<String, Object> getExtraData();
++
++    /**
++     * Returns either the current nickname of the player if hes nicked or
++     * null if the player isnt nicked
++     * <p>
++     * Note before properly using this method you should first check with
++     * isNicked() if he is nicked to avoid unwanted nullpointer
++     *
++     * @return the nickname
++     */
++    public String getNickName();
++
++    /**
++     * Used to set if the player has a nickname and which nickname
++     * This method is deprecated so be sure to
++     * never access this method outside of the nickapi to prevent compatabillity
++     * issues.
++     *
++     * @param nickname the new nickname or null if unnick
++     */
++    @Deprecated
++    public void setNickName(String nickname);
++
++    /**
++     * Returns either true if the player is currently nicked by the nickapi or
++     * false if he isnt
++     *
++     * @return if the player is nicked
++     */
++    public boolean isNicked();
++
++    /**
++     * Changes wether the player is currently nicked or not
++     *
++     * @param nicked true if nicked false if not
++     */
++    public void setNicked(boolean nicked);
++
+     /**
+      * Gets the "friendly" name to display of this player. This may include
+      * color.
+@@ -75,7 +120,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      *
+      * @param name new player list name
+      * @throws IllegalArgumentException if the name is already used by someone
+-     *     else
++     *                                  else
+      * @throws IllegalArgumentException if the length of the name is too long
+      */
+     public void setPlayerListName(String name);
+@@ -197,9 +242,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * at the particular location (as far as the client is concerned). This
+      * will not work without a note block. This will not work with cake.
+      *
+-     * @param loc The location of a note block.
++     * @param loc        The location of a note block.
+      * @param instrument The instrument ID.
+-     * @param note The note ID.
++     * @param note       The note ID.
+      * @deprecated Magic value
+      */
+     @Deprecated
+@@ -210,9 +255,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * at the particular location (as far as the client is concerned). This
+      * will not work without a note block. This will not work with cake.
+      *
+-     * @param loc The location of a note block
++     * @param loc        The location of a note block
+      * @param instrument The instrument
+-     * @param note The note
++     * @param note       The note
+      */
+     public void playNote(Location loc, Instrument instrument, Note note);
+ 
+@@ -223,9 +268,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * This function will fail silently if Location or Sound are null.
+      *
+      * @param location The location to play the sound
+-     * @param sound The sound to play
+-     * @param volume The volume of the sound
+-     * @param pitch The pitch of the sound
++     * @param sound    The sound to play
++     * @param volume   The volume of the sound
++     * @param pitch    The pitch of the sound
+      */
+     public void playSound(Location location, Sound sound, float volume, float pitch);
+ 
+@@ -237,18 +282,18 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * respective sound for the value passed.
+      *
+      * @param location the location to play the sound
+-     * @param sound the internal sound name to play
+-     * @param volume the volume of the sound
+-     * @param pitch the pitch of the sound
++     * @param sound    the internal sound name to play
++     * @param volume   the volume of the sound
++     * @param pitch    the pitch of the sound
+      */
+     public void playSound(Location location, String sound, float volume, float pitch);
+ 
+     /**
+      * Plays an effect to just this player.
+      *
+-     * @param loc the location to play the effect at
++     * @param loc    the location to play the effect at
+      * @param effect the {@link Effect}
+-     * @param data a data bit needed for some effects
++     * @param data   a data bit needed for some effects
+      * @deprecated Magic value
+      */
+     @Deprecated
+@@ -257,10 +302,10 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+     /**
+      * Plays an effect to just this player.
+      *
+-     * @param <T> the data based based on the type of the effect
+-     * @param loc the location to play the effect at
++     * @param <T>    the data based based on the type of the effect
++     * @param loc    the location to play the effect at
+      * @param effect the {@link Effect}
+-     * @param data a data bit needed for some effects
++     * @param data   a data bit needed for some effects
+      */
+     public <T> void playEffect(Location loc, Effect effect, T data);
+ 
+@@ -268,9 +313,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Send a block change. This fakes a block change packet for a user at a
+      * certain location. This will not actually change the world in any way.
+      *
+-     * @param loc The location of the changed block
++     * @param loc      The location of the changed block
+      * @param material The new block
+-     * @param data The block data
++     * @param data     The block data
+      * @deprecated Magic value
+      */
+     @Deprecated
+@@ -285,10 +330,10 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * the data buffer must be 2.5*sx*sy*sz and formatted in accordance with
+      * the Packet51 format.
+      *
+-     * @param loc The location of the cuboid
+-     * @param sx The x size of the cuboid
+-     * @param sy The y size of the cuboid
+-     * @param sz The z size of the cuboid
++     * @param loc  The location of the cuboid
++     * @param sx   The x size of the cuboid
++     * @param sy   The y size of the cuboid
++     * @param sz   The z size of the cuboid
+      * @param data The data to be sent
+      * @return true if the chunk change packet was sent
+      * @deprecated Magic value
+@@ -300,9 +345,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Send a block change. This fakes a block change packet for a user at a
+      * certain location. This will not actually change the world in any way.
+      *
+-     * @param loc The location of the changed block
++     * @param loc      The location of the changed block
+      * @param material The new block ID
+-     * @param data The block data
++     * @param data     The block data
+      * @deprecated Magic value
+      */
+     @Deprecated
+@@ -318,7 +363,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * If the client does not have a sign at the given location it will
+      * display an error message to the user.
+      *
+-     * @param loc the location of the sign
++     * @param loc   the location of the sign
+      * @param lines the new text on the sign or null to clear it
+      * @throws IllegalArgumentException if location is null
+      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
+@@ -334,6 +379,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+     public void sendMap(MapView map);
+ 
+     // Paper start
++
+     /**
+      * Sends the component to the player
+      *
+@@ -377,6 +423,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+ 
+     /**
+      * Update the subtitle of titles displayed to the player
++     *
+      * @deprecated Use {@link #updateTitle(Title)}
+      */
+     @Deprecated
+@@ -384,6 +431,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+ 
+     /**
+      * Update the subtitle of titles displayed to the player
++     *
+      * @deprecated Use {@link #updateTitle(Title)}
+      */
+     @Deprecated
+@@ -391,6 +439,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+ 
+     /**
+      * Show the given title to the player, along with the last subtitle set, using the last set times
++     *
+      * @deprecated Use {@link #sendTitle(Title)} or {@link #updateTitle(Title)}
+      */
+     @Deprecated
+@@ -398,6 +447,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+ 
+     /**
+      * Show the given title to the player, along with the last subtitle set, using the last set times
++     *
+      * @deprecated Use {@link #sendTitle(Title)} or {@link #updateTitle(Title)}
+      */
+     @Deprecated
+@@ -457,7 +507,6 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+ 
+     /**
+      * Forces an update of the player's entire inventory.
+-     *
+      */
+     //@Deprecated // Spigot - undeprecate
+     public void updateInventory();
+@@ -498,7 +547,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * @param statistic Statistic to increment
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if the statistic requires an
+-     *     additional parameter
++     *                                  additional parameter
+      */
+     public void incrementStatistic(Statistic statistic) throws IllegalArgumentException;
+ 
+@@ -511,7 +560,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * @param statistic Statistic to decrement
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if the statistic requires an
+-     *     additional parameter
++     *                                  additional parameter
+      */
+     public void decrementStatistic(Statistic statistic) throws IllegalArgumentException;
+ 
+@@ -519,11 +568,11 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Increments the given statistic for this player.
+      *
+      * @param statistic Statistic to increment
+-     * @param amount Amount to increment this statistic by
++     * @param amount    Amount to increment this statistic by
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if amount is negative
+      * @throws IllegalArgumentException if the statistic requires an
+-     *     additional parameter
++     *                                  additional parameter
+      */
+     public void incrementStatistic(Statistic statistic, int amount) throws IllegalArgumentException;
+ 
+@@ -531,11 +580,11 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Decrements the given statistic for this player.
+      *
+      * @param statistic Statistic to decrement
+-     * @param amount Amount to decrement this statistic by
++     * @param amount    Amount to decrement this statistic by
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if amount is negative
+      * @throws IllegalArgumentException if the statistic requires an
+-     *     additional parameter
++     *                                  additional parameter
+      */
+     public void decrementStatistic(Statistic statistic, int amount) throws IllegalArgumentException;
+ 
+@@ -543,11 +592,11 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Sets the given statistic for this player.
+      *
+      * @param statistic Statistic to set
+-     * @param newValue The value to set this statistic to
++     * @param newValue  The value to set this statistic to
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if newValue is negative
+      * @throws IllegalArgumentException if the statistic requires an
+-     *     additional parameter
++     *                                  additional parameter
+      */
+     public void setStatistic(Statistic statistic, int newValue) throws IllegalArgumentException;
+ 
+@@ -558,7 +607,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * @return the value of the given statistic
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if the statistic requires an
+-     *     additional parameter
++     *                                  additional parameter
+      */
+     public int getStatistic(Statistic statistic) throws IllegalArgumentException;
+ 
+@@ -569,11 +618,11 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * <code>incrementStatistic(Statistic, Material, 1)</code>
+      *
+      * @param statistic Statistic to increment
+-     * @param material Material to offset the statistic with
++     * @param material  Material to offset the statistic with
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if material is null
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void incrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException;
+ 
+@@ -584,11 +633,11 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * <code>decrementStatistic(Statistic, Material, 1)</code>
+      *
+      * @param statistic Statistic to decrement
+-     * @param material Material to offset the statistic with
++     * @param material  Material to offset the statistic with
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if material is null
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void decrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException;
+ 
+@@ -596,12 +645,12 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Gets the value of the given statistic for this player.
+      *
+      * @param statistic Statistic to check
+-     * @param material Material offset of the statistic
++     * @param material  Material offset of the statistic
+      * @return the value of the given statistic
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if material is null
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public int getStatistic(Statistic statistic, Material material) throws IllegalArgumentException;
+ 
+@@ -609,13 +658,13 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Increments the given statistic for this player for the given material.
+      *
+      * @param statistic Statistic to increment
+-     * @param material Material to offset the statistic with
+-     * @param amount Amount to increment this statistic by
++     * @param material  Material to offset the statistic with
++     * @param amount    Amount to increment this statistic by
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if material is null
+      * @throws IllegalArgumentException if amount is negative
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void incrementStatistic(Statistic statistic, Material material, int amount) throws IllegalArgumentException;
+ 
+@@ -623,13 +672,13 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Decrements the given statistic for this player for the given material.
+      *
+      * @param statistic Statistic to decrement
+-     * @param material Material to offset the statistic with
+-     * @param amount Amount to decrement this statistic by
++     * @param material  Material to offset the statistic with
++     * @param amount    Amount to decrement this statistic by
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if material is null
+      * @throws IllegalArgumentException if amount is negative
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void decrementStatistic(Statistic statistic, Material material, int amount) throws IllegalArgumentException;
+ 
+@@ -637,13 +686,13 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Sets the given statistic for this player for the given material.
+      *
+      * @param statistic Statistic to set
+-     * @param material Material to offset the statistic with
+-     * @param newValue The value to set this statistic to
++     * @param material  Material to offset the statistic with
++     * @param newValue  The value to set this statistic to
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if material is null
+      * @throws IllegalArgumentException if newValue is negative
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void setStatistic(Statistic statistic, Material material, int newValue) throws IllegalArgumentException;
+ 
+@@ -653,12 +702,12 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * This is equivalent to the following code:
+      * <code>incrementStatistic(Statistic, EntityType, 1)</code>
+      *
+-     * @param statistic Statistic to increment
++     * @param statistic  Statistic to increment
+      * @param entityType EntityType to offset the statistic with
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if entityType is null
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void incrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException;
+ 
+@@ -668,67 +717,67 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * This is equivalent to the following code:
+      * <code>decrementStatistic(Statistic, EntityType, 1)</code>
+      *
+-     * @param statistic Statistic to decrement
++     * @param statistic  Statistic to decrement
+      * @param entityType EntityType to offset the statistic with
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if entityType is null
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void decrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException;
+ 
+     /**
+      * Gets the value of the given statistic for this player.
+      *
+-     * @param statistic Statistic to check
++     * @param statistic  Statistic to check
+      * @param entityType EntityType offset of the statistic
+      * @return the value of the given statistic
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if entityType is null
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public int getStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException;
+ 
+     /**
+      * Increments the given statistic for this player for the given entity.
+      *
+-     * @param statistic Statistic to increment
++     * @param statistic  Statistic to increment
+      * @param entityType EntityType to offset the statistic with
+-     * @param amount Amount to increment this statistic by
++     * @param amount     Amount to increment this statistic by
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if entityType is null
+      * @throws IllegalArgumentException if amount is negative
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void incrementStatistic(Statistic statistic, EntityType entityType, int amount) throws IllegalArgumentException;
+ 
+     /**
+      * Decrements the given statistic for this player for the given entity.
+      *
+-     * @param statistic Statistic to decrement
++     * @param statistic  Statistic to decrement
+      * @param entityType EntityType to offset the statistic with
+-     * @param amount Amount to decrement this statistic by
++     * @param amount     Amount to decrement this statistic by
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if entityType is null
+      * @throws IllegalArgumentException if amount is negative
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void decrementStatistic(Statistic statistic, EntityType entityType, int amount);
+ 
+     /**
+      * Sets the given statistic for this player for the given entity.
+      *
+-     * @param statistic Statistic to set
++     * @param statistic  Statistic to set
+      * @param entityType EntityType to offset the statistic with
+-     * @param newValue The value to set this statistic to
++     * @param newValue   The value to set this statistic to
+      * @throws IllegalArgumentException if statistic is null
+      * @throws IllegalArgumentException if entityType is null
+      * @throws IllegalArgumentException if newValue is negative
+      * @throws IllegalArgumentException if the given parameter is not valid
+-     *     for the statistic
++     *                                  for the statistic
+      */
+     public void setStatistic(Statistic statistic, EntityType entityType, int newValue);
+ 
+@@ -742,10 +791,10 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * the player's time. To restore player time to normal use
+      * resetPlayerTime().
+      *
+-     * @param time The current player's perceived time or the player's time
+-     *     offset from the server time.
++     * @param time     The current player's perceived time or the player's time
++     *                 offset from the server time.
+      * @param relative When true the player time is kept relative to its world
+-     *     time.
++     *                 time.
+      */
+     public void setPlayerTime(long time, boolean relative);
+ 
+@@ -794,7 +843,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Returns the type of weather the player is currently experiencing.
+      *
+      * @return The WeatherType that the player is currently experiencing or
+-     *     null if player is seeing server weather.
++     * null if player is seeing server weather.
+      */
+     public WeatherType getPlayerWeather();
+ 
+@@ -933,8 +982,8 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Sets the Location where the player will spawn at their bed.
+      *
+      * @param location where to set the respawn location
+-     * @param force whether to forcefully set the respawn location even if a
+-     *     valid bed is not present
++     * @param force    whether to forcefully set the respawn location even if a
++     *                 valid bed is not present
+      */
+     public void setBedSpawnLocation(Location location, boolean force);
+ 
+@@ -973,7 +1022,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      *
+      * @param player Player to check
+      * @return True if the provided player is not being hidden from this
+-     *     player
++     * player
+      */
+     public boolean canSee(Player player);
+ 
+@@ -984,7 +1033,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      *
+      * @return True if the player standing on a solid block, else false.
+      * @deprecated Inconsistent with {@link
+-     *     org.bukkit.entity.Entity#isOnGround()}
++     * org.bukkit.entity.Entity#isOnGround()}
+      */
+     @Deprecated
+     public boolean isOnGround();
+@@ -1009,7 +1058,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      *
+      * @param value The new speed, from -1 to 1.
+      * @throws IllegalArgumentException If new speed is less than -1 or
+-     *     greater than 1
++     *                                  greater than 1
+      */
+     public void setFlySpeed(float value) throws IllegalArgumentException;
+ 
+@@ -1019,7 +1068,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      *
+      * @param value The new speed, from -1 to 1.
+      * @throws IllegalArgumentException If new speed is less than -1 or
+-     *     greater than 1
++     *                                  greater than 1
+      */
+     public void setWalkSpeed(float value) throws IllegalArgumentException;
+ 
+@@ -1058,12 +1107,12 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * </ul>
+      *
+      * @param url The URL from which the client will download the texture
+-     *     pack. The string must contain only US-ASCII characters and should
+-     *     be encoded as per RFC 1738.
++     *            pack. The string must contain only US-ASCII characters and should
++     *            be encoded as per RFC 1738.
+      * @throws IllegalArgumentException Thrown if the URL is null.
+      * @throws IllegalArgumentException Thrown if the URL is too long.
+      * @deprecated Minecraft no longer uses textures packs. Instead you
+-     *     should use {@link #setResourcePack(String)}.
++     * should use {@link #setResourcePack(String)}.
+      */
+     @Deprecated
+     public void setTexturePack(String url);
+@@ -1089,11 +1138,11 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * </ul>
+      *
+      * @param url The URL from which the client will download the resource
+-     *     pack. The string must contain only US-ASCII characters and should
+-     *     be encoded as per RFC 1738.
++     *            pack. The string must contain only US-ASCII characters and should
++     *            be encoded as per RFC 1738.
+      * @throws IllegalArgumentException Thrown if the URL is null.
+      * @throws IllegalArgumentException Thrown if the URL is too long. The
+-     *     length restriction is an implementation specific arbitrary value.
++     *                                  length restriction is an implementation specific arbitrary value.
+      */
+     public void setResourcePack(String url);
+ 
+@@ -1110,9 +1159,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * @param scoreboard New Scoreboard for the player
+      * @throws IllegalArgumentException if scoreboard is null
+      * @throws IllegalArgumentException if scoreboard was not created by the
+-     *     {@link org.bukkit.scoreboard.ScoreboardManager scoreboard manager}
+-     * @throws IllegalStateException if this is a player that is not logged
+-     *     yet or has logged out
++     *                                  {@link org.bukkit.scoreboard.ScoreboardManager scoreboard manager}
++     * @throws IllegalStateException    if this is a player that is not logged
++     *                                  yet or has logged out
+      */
+     public void setScoreboard(Scoreboard scoreboard) throws IllegalArgumentException, IllegalStateException;
+ 
+@@ -1154,7 +1203,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * Gets the number that health is scaled to for the client.
+      *
+      * @return the number that health would be scaled to for the client if
+-     *     HealthScaling is set to true
++     * HealthScaling is set to true
+      * @see Player#setHealthScale(double)
+      * @see Player#setHealthScaled(boolean)
+      */
+@@ -1175,7 +1224,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      *
+      * @param entity the entity to follow or null to reset
+      * @throws IllegalStateException if the player is not in
+-     * {@link GameMode#SPECTATOR}
++     *                               {@link GameMode#SPECTATOR}
+      */
+     public void setSpectatorTarget(Entity entity);
+ 
+@@ -1186,7 +1235,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * such. If the strings contain a new line, only the first line will be
+      * sent.
+      *
+-     * @param title Title text
++     * @param title    Title text
+      * @param subtitle Subtitle text
+      * @deprecated API subject to change
+      */
+@@ -1200,8 +1249,7 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+     public void resetTitle();
+ 
+     // Spigot start
+-    public class Spigot extends Entity.Spigot
+-    {
++    public class Spigot extends Entity.Spigot {
+ 
+         /**
+          * Gets the connection address of this player, regardless of whether it
+@@ -1209,14 +1257,12 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+          *
+          * @return the player's connection address
+          */
+-        public InetSocketAddress getRawAddress()
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet." );
++        public InetSocketAddress getRawAddress() {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+-        public void playEffect(Location location, Effect effect, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius)
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet." );
++        public void playEffect(Location location, Effect effect, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius) {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+         /**
+@@ -1224,28 +1270,25 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+          *
+          * @return the player's collision toggle state
+          */
+-        public boolean getCollidesWithEntities()
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet." );
++        public boolean getCollidesWithEntities() {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+         /**
+          * Sets whether the player collides with entities
+          *
+          * @param collides whether the player should collide with entities or
+-         * not.
++         *                 not.
+          */
+-        public void setCollidesWithEntities(boolean collides)
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet." );
++        public void setCollidesWithEntities(boolean collides) {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+         /**
+          * Respawns the player if dead.
+          */
+-        public void respawn()
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet." );
++        public void respawn() {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+         /**
+@@ -1253,9 +1296,8 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+          *
+          * @return the player's client language settings
+          */
+-        public String getLocale()
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet." );
++        public String getLocale() {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+         /**
+@@ -1263,9 +1305,8 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+          *
+          * @return a Set with all hidden players
+          */
+-        public java.util.Set<Player> getHiddenPlayers()
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet." );
++        public java.util.Set<Player> getHiddenPlayers() {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+         /**
+@@ -1292,20 +1333,18 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+          * @return whether or not the player affects
+          * mob spawning.
+          */
+-        public boolean getAffectsSpawning()
+-        {
+-            throw new  UnsupportedOperationException( "Not supported yet." );
++        public boolean getAffectsSpawning() {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+         /**
+          * Set whether or not the player affects mob spawning
+          *
+          * @param affects whether or not the player should affect
+-         * spawning or not.
++         *                spawning or not.
+          */
+-        public void setAffectsSpawning(boolean affects)
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet" );
++        public void setAffectsSpawning(boolean affects) {
++            throw new UnsupportedOperationException("Not supported yet");
+         }
+ 
+         /**
+@@ -1313,9 +1352,8 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+          *
+          * @return View distance
+          */
+-        public int getViewDistance()
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet" );
++        public int getViewDistance() {
++            throw new UnsupportedOperationException("Not supported yet");
+         }
+ 
+         /**
+@@ -1323,14 +1361,12 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+          *
+          * @param viewDistance View distance
+          */
+-        public void setViewDistance(int viewDistance)
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet" );
++        public void setViewDistance(int viewDistance) {
++            throw new UnsupportedOperationException("Not supported yet");
+         }
+ 
+-        public int getPing()
+-        {
+-            throw new UnsupportedOperationException( "Not supported yet." );
++        public int getPing() {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+     }
+ 
+-- 
+2.26.2.windows.1
+

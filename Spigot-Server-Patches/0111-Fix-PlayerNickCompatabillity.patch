@@ -1,0 +1,28 @@
+From 946c68c0ef2ac2eecded4b84a803c079165b942d Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Tue, 4 Aug 2020 00:22:50 +0200
+Subject: [PATCH] Fix PlayerNickCompatabillity
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 1dac56c6..841ff860 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -1051,13 +1051,8 @@ public abstract class PlayerList {
+     public EntityPlayer getPlayer(String s) {
+         if (this.playersByName.get(s) == null) {
+             for (EntityPlayer entityPlayer : this.playersByName.values()) {
+-                Bukkit.getOnlinePlayers().forEach(player -> {
+-                    Bukkit.broadcastMessage(player.getName()+" "+player.isNicked()+" "+player.getNickName());
+-                    Bukkit.broadcastMessage(entityPlayer.getBukkitEntity().getName()+" "+entityPlayer.getBukkitEntity().isNicked()+" "+entityPlayer.getBukkitEntity().getNickName());
+-                    Bukkit.broadcastMessage(s);
+-                });
+                 if (entityPlayer.getBukkitEntity().isNicked()) {
+-                    if (entityPlayer.getBukkitEntity().getDisplayName().equalsIgnoreCase(s)) {
++                    if (entityPlayer.getBukkitEntity().getName().equalsIgnoreCase(s)) {
+                         return entityPlayer;
+                     }
+                 }
+-- 
+2.26.2.windows.1
+

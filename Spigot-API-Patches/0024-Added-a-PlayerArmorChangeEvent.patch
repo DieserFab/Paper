@@ -1,0 +1,115 @@
+From 425e67965e6d69b91a121ea17dbd309be85e47a7 Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Sun, 26 Jul 2020 22:48:39 +0200
+Subject: [PATCH] Added a PlayerArmorChangeEvent
+
+
+diff --git a/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java b/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java
+new file mode 100644
+index 00000000..dafe33b3
+--- /dev/null
++++ b/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java
+@@ -0,0 +1,100 @@
++package de.dieserfab.fabspigot.event.player;
++
++import org.bukkit.Material;
++import org.bukkit.entity.Player;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.player.PlayerEvent;
++import org.bukkit.inventory.ItemStack;
++
++import java.util.Arrays;
++import java.util.Collections;
++import java.util.HashSet;
++import java.util.Set;
++
++public class PlayerArmorChangeEvent extends PlayerEvent {
++    private static final HandlerList HANDLERS = new HandlerList();
++
++    private final SlotType slotType;
++
++    private final ItemStack oldItem;
++
++    private final ItemStack newItem;
++
++    public PlayerArmorChangeEvent(Player player, SlotType slotType, ItemStack oldItem, ItemStack newItem) {
++        super(player);
++        this.slotType = slotType;
++        this.oldItem = oldItem;
++        this.newItem = newItem;
++    }
++
++    public SlotType getSlotType() {
++        return this.slotType;
++    }
++
++    public ItemStack getOldItem() {
++        return this.oldItem;
++    }
++
++    public ItemStack getNewItem() {
++        return this.newItem;
++    }
++
++    public String toString() {
++        return "ArmorChangeEvent{player=" + this.player + ", slotType=" + this.slotType + ", oldItem=" + this.oldItem + ", newItem=" + this.newItem + '}';
++    }
++
++    public HandlerList getHandlers() {
++        return HANDLERS;
++    }
++
++    public static HandlerList getHandlerList() {
++        return HANDLERS;
++    }
++
++    public enum SlotType {
++        HEAD(Material.DIAMOND_HELMET, Material.GOLD_HELMET, Material.IRON_HELMET, Material.CHAINMAIL_HELMET, Material.LEATHER_HELMET, Material.PUMPKIN, Material.JACK_O_LANTERN),
++        CHEST(Material.DIAMOND_CHESTPLATE, Material.GOLD_CHESTPLATE, Material.IRON_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.LEATHER_CHESTPLATE),
++        LEGS(Material.DIAMOND_LEGGINGS, Material.GOLD_LEGGINGS, Material.IRON_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.LEATHER_LEGGINGS),
++        FEET(Material.DIAMOND_BOOTS, Material.GOLD_BOOTS, Material.IRON_BOOTS, Material.CHAINMAIL_BOOTS, Material.LEATHER_BOOTS);
++
++        private final Set<Material> mutableTypes = new HashSet<>();
++
++        private Set<Material> immutableTypes;
++
++        SlotType(Material... types) {
++            this.mutableTypes.addAll(Arrays.asList(types));
++        }
++
++        public static SlotType getById(int id) {
++            switch (id) {
++                case 1:
++                    return HEAD;
++                case 2:
++                    return CHEST;
++                case 3:
++                    return LEGS;
++                case 4:
++                    return FEET;
++            }
++            return null;
++        }
++
++        public Set<Material> getTypes() {
++            if (this.immutableTypes == null)
++                this.immutableTypes = Collections.unmodifiableSet(this.mutableTypes);
++            return this.immutableTypes;
++        }
++
++        public static SlotType getByMaterial(Material material) {
++            for (SlotType slotType : values()) {
++                if (slotType.getTypes().contains(material))
++                    return slotType;
++            }
++            return null;
++        }
++
++        public static boolean isEquipable(Material material) {
++            return (getByMaterial(material) != null);
++        }
++    }
++}
+-- 
+2.26.2.windows.1
+

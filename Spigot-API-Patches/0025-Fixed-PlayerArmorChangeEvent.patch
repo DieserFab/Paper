@@ -1,0 +1,42 @@
+From 4fcad0bf6bb82af335045a1c26da2b37a0c7ed2a Mon Sep 17 00:00:00 2001
+From: DieserFab <fabiankbullik@gmail.com>
+Date: Mon, 27 Jul 2020 20:40:16 +0200
+Subject: [PATCH] Fixed PlayerArmorChangeEvent
+
+
+diff --git a/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java b/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java
+index dafe33b3..4fb3d9de 100644
+--- a/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java
++++ b/src/main/java/de/dieserfab/fabspigot/event/player/PlayerArmorChangeEvent.java
+@@ -52,6 +52,7 @@ public class PlayerArmorChangeEvent extends PlayerEvent {
+     }
+ 
+     public enum SlotType {
++        HAND(null),
+         HEAD(Material.DIAMOND_HELMET, Material.GOLD_HELMET, Material.IRON_HELMET, Material.CHAINMAIL_HELMET, Material.LEATHER_HELMET, Material.PUMPKIN, Material.JACK_O_LANTERN),
+         CHEST(Material.DIAMOND_CHESTPLATE, Material.GOLD_CHESTPLATE, Material.IRON_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.LEATHER_CHESTPLATE),
+         LEGS(Material.DIAMOND_LEGGINGS, Material.GOLD_LEGGINGS, Material.IRON_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.LEATHER_LEGGINGS),
+@@ -67,14 +68,16 @@ public class PlayerArmorChangeEvent extends PlayerEvent {
+ 
+         public static SlotType getById(int id) {
+             switch (id) {
++                case 0:
++                    return HAND;
+                 case 1:
+-                    return HEAD;
++                    return FEET;
+                 case 2:
+-                    return CHEST;
+-                case 3:
+                     return LEGS;
++                case 3:
++                    return CHEST;
+                 case 4:
+-                    return FEET;
++                    return HEAD;
+             }
+             return null;
+         }
+-- 
+2.26.2.windows.1
+
